@@ -91,7 +91,30 @@ def student_screen():
 
 
 
+
+# ------------------ STUDENT DASHBOARD ------------------
 def student_dashboard():
-    student = st.session_state.student_data
-    st.header(f"Welcome, {student['name']}!", text_alignment='center')
-    st.subheader("This is your student dashboard. Here you can view your attendance records and manage your profile.")
+    student_data = st.session_state.student_data
+
+    c1, c2 = st.columns(2, vertical_alignment="center", gap="xxlarge")
+
+    with c1:
+        header_dashboard()
+
+    with c2:
+        st.subheader(f"Welcome, {student_data['name']}!")
+
+        if st.button(
+            "Logout",
+            type="secondary",
+            key="loginbackbtn",
+            shortcut="control+backspace"
+        ):
+            st.session_state['is_logged_in'] = False
+            del st.session_state.student_data
+            st.rerun()
+
+    st.space()
+
+    footer_dashboard()
+
