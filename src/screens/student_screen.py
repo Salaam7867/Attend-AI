@@ -122,5 +122,16 @@ def student_dashboard():
     with c2:
         if st.button("Enroll in a subject", type="primary",width="stretch"):
             enroll_dialog()
+
+    st.divider()
+
+    with st.spinner("Loading your subjects..."):
+        subjects = st.session_state.student_data.get("subjects", [])
+        if subjects:
+            for subject in subjects:
+                st.markdown(f"- **{subject['name']}** (Code: {subject['subject_code']}, Section: {subject['section']})")
+        else:
+            st.info("You are not enrolled in any subjects yet. Click the button above to enroll!")
+
     footer_dashboard()
 
