@@ -14,5 +14,5 @@ scikit-learn
 
 # Image / QR
 pillow
-segno
+qrcode[pil]
 opencv-python

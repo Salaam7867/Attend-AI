@@ -1,0 +1,12 @@
+.env
+.vscode
+
+*.pyc
+__pycache__/
+
+# Ignore virtual environment folders
+venv/
+
+.streamlit/
+
+dist/ 
