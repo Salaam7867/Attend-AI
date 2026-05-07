@@ -7,7 +7,7 @@ from src.ui.base_layout import style_background_dashboard, style_base_layout
 from src.pipelines.face_pipeline import predict_attendance,get_face_embeddings, get_trained_model, train_classifier  
 from src.components.header import header_dashboard
 from src.components.footer import footer_dashboard
-from src.database.db import get_all_students, create_student
+from src.database.db import get_all_students, create_student, get_student_subjects, get_student_attendance,unenroll_subject
 from PIL import Image
 
 def student_screen():
@@ -126,12 +126,34 @@ def student_dashboard():
     st.divider()
 
     with st.spinner("Loading your subjects..."):
-        subjects = st.session_state.student_data.get("subjects", [])
-        if subjects:
-            for subject in subjects:
-                st.markdown(f"- **{subject['name']}** (Code: {subject['subject_code']}, Section: {subject['section']})")
-        else:
-            st.info("You are not enrolled in any subjects yet. Click the button above to enroll!")
+        subjects = get_student_subjects(st.session_state.student_data['student_id'])
+        logs = get_student_attendance(st.session_state.student_data['student_id'])
+
+    if not subjects:
+        st.info("You are not enrolled in any subjects yet.")
+    else:
+        for item in subjects:
+            subject = item['subjects']  # ✅ unwrap the nested dict
+
+            # Count attendance for this subject
+            subject_logs = [l for l in logs if l['subject_id'] == subject['subject_id']]
+            attended = sum(1 for l in subject_logs if l.get('status') == 'present')
+            total = len(subject_logs)
+
+            with st.container(border=True):
+                st.subheader(subject['name'])
+                st.caption(f"Code: `{subject['subject_code']}` | Section: {subject['section']}")
+                col1, col2 = st.columns(2)
+                col1.metric("Total Classes", total)
+                col2.metric("Attended", attended)
+
+                if st.button("Unenroll from this course", 
+                            key=f"unenroll_{subject['subject_id']}",
+                            type="secondary"):
+                    unenroll_subject(subject['subject_id'])
+                    st.success(f"You have been unenrolled from {subject['name']}.")
+                    st.rerun()
+
 
     footer_dashboard()
 

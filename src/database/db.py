@@ -57,3 +57,17 @@ def enroll_student_to_subject(student_id, subject_id):
     data = { "student_id": student_id, "subject_id": subject_id }
     response = supabase.table("subject_students").insert(data).execute()
     return response.data[0] if response.data else None
+
+
+def get_student_subjects(student_id):
+    response = supabase.table("subject_students").select("subjects(*)").eq("student_id", student_id).execute()
+    return response.data
+
+def get_student_attendance(student_id):
+    response = supabase.table("attendance_logs").select("*").eq("student_id", student_id).execute()
+    return response.data
+
+def unenroll_subject(subject_id):
+    response = supabase.table("subject_students").delete().eq("subject_id", subject_id).execute()
+    return response.data
+    

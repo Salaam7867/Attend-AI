@@ -3,6 +3,7 @@ import streamlit as st
 from src.components import dialog_create_subject
 from src.components.dialog_create_subject import dialog_create_subject
 from src.components.dialog_share_subject import share_subject_dialog   
+from src.components.dialog_attendance import dialog_attendance
 from src.ui.base_layout import style_background_dashboard, style_base_layout
 from src.components.header import header_dashboard
 from src.components.footer import footer_dashboard
@@ -101,13 +102,51 @@ def teacher_dashboard():
 def teacher_tab_take_attendance():
     st.header("Take Attendance")
     
+    teacher_id = st.session_state.teacher_data['teacher_id']
+    subjects = get_subjects_by_teacher(teacher_id)
+
+    if not subjects:
+        st.info("No subjects created yet! Create one in 'Manage Subjects'.")
+        return
+
+    subject_options = {f"{s['name']} ({s['section']})": s for s in subjects}
+
+    c1, c2 = st.columns([3,1], vertical_alignment='bottom')
+    with c1:
+        selected_label = st.selectbox("Select Subject", options=list(subject_options.keys()))
+        selected_subject = subject_options[selected_label]
+    with c2:
+        if st.button("Start Attendance", type='primary', icon=':material/ar_on_you:'):
+            dialog_attendance(selected_subject['subject_id'])
+
+    # --- Added Photos (on main page, below the selectbox) ---
+    if st.session_state.get('added_photos'):
+        st.divider()
+        st.subheader("Added Photos")
+        cols = st.columns(3)
+        for i, photo in enumerate(st.session_state.added_photos):
+            with cols[i % 3]:
+                st.image(photo, caption=f"Photo {i+1}", use_container_width=True)
+
+        st.divider()
+        b1, b2 = st.columns(2, gap='small')
+        with b1:
+            if st.button("Clear all photos", type="tertiary", width='stretch', icon=':material/delete:'):
+                st.session_state.added_photos = []
+                st.rerun()
+        with b2:
+            if st.button("Run Face Analysis", type="primary", width='stretch', icon=':material/face:'):
+                st.info("Processing photos for attendance...")
+                # Here you would call your face recognition pipeline with the added photos
+                # For example: results = predict_attendance(st.session_state.added_photos, selected_subject['subject_id'])
+                # Then you can display the results or save them to the database
+        
 
 def teacher_tab_manage_subjects():
     teacher_id = st.session_state.teacher_data['teacher_id']
     c1, c2 = st.columns(2, vertical_alignment='center', gap='xxlarge')
     with c1:
         st.header("Manage Subjects")
-        
     with c2:
         if st.button("Create New Subject", type='primary', icon=':material/add:'):
             dialog_create_subject(teacher_id)
