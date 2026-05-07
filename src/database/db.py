@@ -71,3 +71,23 @@ def unenroll_subject(subject_id):
     response = supabase.table("subject_students").delete().eq("subject_id", subject_id).execute()
     return response.data
     
+
+def get_students_by_subject(subject_id):
+    response = supabase.table("subject_students")\
+        .select("student_id, students(student_id, name)")\
+        .eq("subject_id", subject_id).execute()
+    return [
+        {'student_id': r['students']['student_id'], 'name': r['students']['name']} 
+        for r in response.data if r.get('students')
+    ]
+
+def save_attendance(results, subject_id):
+    from datetime import datetime
+    for r in results:
+        data = {
+            "student_id": r['student_id'],
+            "subject_id": subject_id,
+            "status": "present" if r['present'] else "absent",
+            "date": datetime.now().isoformat()
+        }
+        supabase.table("attendance_logs").insert(data).execute()

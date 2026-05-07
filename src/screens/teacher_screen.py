@@ -4,11 +4,16 @@ from src.components import dialog_create_subject
 from src.components.dialog_create_subject import dialog_create_subject
 from src.components.dialog_share_subject import share_subject_dialog   
 from src.components.dialog_attendance import dialog_attendance
+from src.components.dialog_attendance_report import dialog_attendance_report
 from src.ui.base_layout import style_background_dashboard, style_base_layout
 from src.components.header import header_dashboard
 from src.components.footer import footer_dashboard
 from src.database.db import check_teacher_exists, create_teacher, teacher_login, get_subjects_by_teacher     
 
+from src.pipelines.face_pipeline import predict_attendance
+from src.database.db import get_students_by_subject
+import numpy as np
+from PIL import Image
 
 def teacher_screen():
     style_background_dashboard()
@@ -136,11 +141,43 @@ def teacher_tab_take_attendance():
                 st.rerun()
         with b2:
             if st.button("Run Face Analysis", type="primary", width='stretch', icon=':material/face:'):
-                st.info("Processing photos for attendance...")
-                # Here you would call your face recognition pipeline with the added photos
-                # For example: results = predict_attendance(st.session_state.added_photos, selected_subject['subject_id'])
-                # Then you can display the results or save them to the database
-        
+                # student_id -> list of photo sources
+                all_detected = {}
+                all_students_ids = []
+                total_faces = 0
+
+                with st.spinner("Scanning photos for faces..."):
+                    for i, photo in enumerate(st.session_state.added_photos):
+                        img = Image.open(photo).convert("RGB")
+                        img_np = np.array(img)
+                        detected, students, face_count = predict_attendance(img_np)
+
+                        # Track which photo each student was found in
+                        for student_id in detected:
+                            if student_id not in all_detected:
+                                all_detected[student_id] = []
+                            all_detected[student_id].append(f"Photo {i+1}")
+
+                        total_faces += face_count
+                        if students:
+                            all_students_ids = students
+
+                # Build results list for the dialog
+                enrolled = get_students_by_subject(selected_subject['subject_id'])
+                enrolled_map = {s['student_id']: s['name'] for s in enrolled}
+
+                results = []
+                for student_id in all_students_ids:
+                    is_present = student_id in all_detected
+                    results.append({
+                        'student_id': student_id,
+                        'name': enrolled_map.get(student_id, f"Student {student_id}"),
+                        'present': is_present,
+                        'source': ", ".join(all_detected[student_id]) if is_present else "—"
+                    })
+
+                # Open the report dialog
+                dialog_attendance_report(results, selected_subject['subject_id'])
 
 def teacher_tab_manage_subjects():
     teacher_id = st.session_state.teacher_data['teacher_id']
