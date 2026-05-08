@@ -141,43 +141,50 @@ def teacher_tab_take_attendance():
                 st.rerun()
         with b2:
             if st.button("Run Face Analysis", type="primary", width='stretch', icon=':material/face:'):
-                # student_id -> list of photo sources
-                all_detected = {}
-                all_students_ids = []
-                total_faces = 0
-
-                with st.spinner("Scanning photos for faces..."):
-                    for i, photo in enumerate(st.session_state.added_photos):
-                        img = Image.open(photo).convert("RGB")
-                        img_np = np.array(img)
-                        detected, students, face_count = predict_attendance(img_np)
-
-                        # Track which photo each student was found in
-                        for student_id in detected:
-                            if student_id not in all_detected:
-                                all_detected[student_id] = []
-                            all_detected[student_id].append(f"Photo {i+1}")
-
-                        total_faces += face_count
-                        if students:
-                            all_students_ids = students
-
-                # Build results list for the dialog
+    
+                # Step 1 — Get enrolled students for THIS subject (this is the base list)
                 enrolled = get_students_by_subject(selected_subject['subject_id'])
-                enrolled_map = {s['student_id']: s['name'] for s in enrolled}
+                
+                if not enrolled:
+                    st.warning("No students enrolled in this subject yet!")
+                else:
+                    # student_id -> list of photos they were found in
+                    all_detected = {}
+                    total_faces = 0
 
-                results = []
-                for student_id in all_students_ids:
-                    is_present = student_id in all_detected
-                    results.append({
-                        'student_id': student_id,
-                        'name': enrolled_map.get(student_id, f"Student {student_id}"),
-                        'present': is_present,
-                        'source': ", ".join(all_detected[student_id]) if is_present else "—"
-                    })
+                    with st.spinner("Scanning photos for faces..."):
+                        for i, photo in enumerate(st.session_state.added_photos):
+                            img = Image.open(photo).convert("RGB")
+                            img_np = np.array(img)
+                            detected, _, face_count = predict_attendance(img_np)
+                            
+                            total_faces += face_count
+                            for student_id in detected:
+                                # Convert to int to ensure type match
+                                sid = int(student_id)
+                                if sid not in all_detected:
+                                    all_detected[sid] = []
+                                all_detected[sid].append(f"Photo {i+1}")
 
-                # Open the report dialog
-                dialog_attendance_report(results, selected_subject['subject_id'])
+                    # Step 2 — Build results from enrolled list, not SVM list
+                    results = []
+                    attendance_to_log =[]
+                    for student in enrolled:
+                        sid = int(student['student_id'])
+                        is_present = sid in all_detected
+                        results.append({
+                            'student_id': sid,
+                            'name': student['name'],   # real name from DB
+                            'present': is_present,
+                            'source': ", ".join(all_detected[sid]) if is_present else "—"
+                        })
+
+                        attendance_to_log.append({
+                            
+                        })
+
+                    dialog_attendance_report(results, selected_subject['subject_id'])
+
 
 def teacher_tab_manage_subjects():
     teacher_id = st.session_state.teacher_data['teacher_id']
