@@ -246,7 +246,7 @@ def teacher_tab_attendance_records():
             st.session_state.selected_session = None
             st.rerun()
 
-        st.subheader(f"{session['name']} — Section {session['section']}")
+        st.subheader(f"{session['name']} — `{session['subject_code']}` — Section {session['section']}")
         st.caption(session['timestamp'])
 
         enrolled = get_student_count_by_subject(session['subject_id'])
@@ -332,29 +332,31 @@ def teacher_tab_attendance_records():
     st.divider()
 
     # ---------- SESSION TABLE ----------
-    h1, h2, h3, h4, h5 = st.columns([2, 1, 2, 1, 1])
+    h1, h2, h3, h4, h5, h6 = st.columns([1, 1, 1, 1.25, 1, 1])
     with h1: st.markdown("**Subject**")
-    with h2: st.markdown("**Section**")
-    with h3: st.markdown("**Date & Time**")
-    with h4: st.markdown("**Attended**")
-    with h5: st.markdown("")
-
+    with h2: st.markdown("**Code**")
+    with h3: st.markdown("**Section**")
+    with h4: st.markdown("**Date & Time**")
+    with h5: st.markdown("**Attended**")
+    with h6: st.markdown("")
     st.divider()
 
     for session in filtered_sessions:
-        col1, col2, col3, col4, col5 = st.columns([2, 1, 2, 1, 1])
+        col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1.25, 1, 1])
         with col1:
             st.write(session['name'])
         with col2:
-            st.write(session['section'])
+            st.write(session['subject_code'])
         with col3:
+            st.write(session['section'])
+        with col4:
             # Format timestamp nicely
             from datetime import datetime
             ts = datetime.fromisoformat(session['timestamp'].replace("Z", "+00:00"))
             st.write(ts.strftime("%d %b %Y, %I:%M %p"))
-        with col4:
-            st.write(f"{session['present']}/{session['total']}")
         with col5:
+            st.write(f"{session['present']}/{session['total']}")
+        with col6:
             if st.button("View", key=f"view_{session['subject_id']}_{session['timestamp']}"):
                 st.session_state.selected_session = session
                 st.rerun()

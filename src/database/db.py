@@ -117,15 +117,16 @@ def get_class_count_by_subject(subject_id):
 def get_attendance_sessions_by_teacher(teacher_id):
     # Step 1 — get all subject_ids for this teacher
     subjects_response = supabase.table("subjects")\
-        .select("subject_id, name, section")\
+        .select("subject_id, name, section, subject_code")\
         .eq("teacher_id", teacher_id).execute()
     
     if not subjects_response.data:
         return []
 
     # Build a lookup: subject_id -> {name, section}
+    # To this — add subject_code
     subject_map = {
-        s['subject_id']: {'name': s['name'], 'section': s['section']}
+        s['subject_id']: {'name': s['name'], 'section': s['section'], 'subject_code': s['subject_code']}
         for s in subjects_response.data
     }
     subject_ids = list(subject_map.keys())
@@ -156,6 +157,7 @@ def get_attendance_sessions_by_teacher(teacher_id):
             'subject_id': subject_id,
             'name': subject_info['name'],
             'section': subject_info['section'],
+            'subject_code': subject_info['subject_code'],
             'timestamp': timestamp,
             'present': counts['present'],
             'total': counts['total']
