@@ -8,12 +8,12 @@ from src.components.dialog_attendance_report import dialog_attendance_report
 from src.ui.base_layout import style_background_dashboard, style_base_layout
 from src.components.header import header_dashboard
 from src.components.footer import footer_dashboard
-from src.database.db import check_teacher_exists, create_teacher, teacher_login, get_subjects_by_teacher     
-
+from src.database.db import check_teacher_exists, create_teacher, teacher_login, get_subjects_by_teacher,get_student_count_by_subject
 from src.pipelines.face_pipeline import predict_attendance
 from src.database.db import get_students_by_subject
 import numpy as np
 from PIL import Image
+from datetime import datetime
 
 def teacher_screen():
     style_background_dashboard()
@@ -169,21 +169,28 @@ def teacher_tab_take_attendance():
                     # Step 2 — Build results from enrolled list, not SVM list
                     results = []
                     attendance_to_log =[]
+
+                    current_timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+
                     for student in enrolled:
                         sid = int(student['student_id'])
                         is_present = sid in all_detected
                         results.append({
-                            'student_id': sid,
-                            'name': student['name'],   # real name from DB
-                            'present': is_present,
-                            'source': ", ".join(all_detected[sid]) if is_present else "—"
+                            'Name': student['name'],   # real name from DB
+                            'Student_id': sid,
+                            'Source': ", ".join(all_detected[sid]) if is_present else "—",
+                            'Status': "Present" if is_present else "Absent"
                         })
 
                         attendance_to_log.append({
+                            'student_id': sid,
+                            'subject_id': selected_subject['subject_id'],
+                            'timestamp': current_timestamp,
+                            'is_present': is_present
                             
                         })
 
-                    dialog_attendance_report(results, selected_subject['subject_id'])
+                    dialog_attendance_report(results, attendance_to_log)
 
 
 def teacher_tab_manage_subjects():
@@ -205,14 +212,13 @@ def teacher_tab_manage_subjects():
     
     for subject in subjects:
         with st.container(border=True):
-            
             st.subheader(subject['name'])
 
             col1, col2 = st.columns(2)
             with col1:
+                student_count = get_student_count_by_subject(subject['subject_id'])
                 st.markdown(f"**Code:** `{subject['subject_code']}` | **Section:** {subject['section']}")
-                st.markdown(f"👥 {subject.get('student_count', 0)} Students &nbsp;&nbsp; 🎓 {subject.get('class_count', 0)} Classes")
-            
+                st.markdown(f"👥 {student_count} Students &nbsp;&nbsp; 🎓 {subject.get('class_count', 0)} Classes")
             with col2:
                 if st.button(f"Share Code : {subject['name']}", 
                             key=f"share_{subject['subject_id']}", 

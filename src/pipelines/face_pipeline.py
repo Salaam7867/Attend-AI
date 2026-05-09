@@ -63,6 +63,30 @@ def train_classifier():
     model_data = get_trained_model()
     return bool(model_data)
 
+"""
+Fallback recognizer when SVM is unavailable (less than 2 students in DB).
+Instead of SVM, directly compares the given face encoding against every
+stored embedding in the DB using Euclidean distance.
+Returns the student_id of the closest match if within threshold, else None.
+"""
+def find_matching_student(encoding):
+    
+    student_db = get_all_students()
+    best_score = float('inf')
+    best_id = None
+
+    for student in student_db:
+        embedding = student.get('face_embedding')
+        if not embedding:
+            continue
+        dist = np.linalg.norm(np.array(embedding) - encoding)
+        if dist < best_score:
+            best_score = dist
+            best_id = student['student_id']
+
+    if best_score <= 0.6:
+        return best_id
+    return None
 
 def predict_attendance(class_image_np):
     encodings = get_face_embeddings(class_image_np)
@@ -72,6 +96,11 @@ def predict_attendance(class_image_np):
     model_data = get_trained_model()
 
     if not model_data:
+        # SVM unavailable — fall back to direct comparison
+        for encoding in encodings:
+            matched_id = find_matching_student(encoding)
+            if matched_id:
+                detected_student[matched_id] = True
         return detected_student, [], len(encodings)
 
     clf = model_data['clf']
