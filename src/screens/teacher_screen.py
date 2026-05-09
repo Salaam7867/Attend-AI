@@ -11,6 +11,7 @@ from src.components.footer import footer_dashboard
 from src.database.db import check_teacher_exists, create_teacher, get_class_count_by_subject, teacher_login, get_subjects_by_teacher,get_student_count_by_subject
 from src.pipelines.face_pipeline import predict_attendance
 from src.database.db import get_students_by_subject
+from src.database.db import get_attendance_sessions_by_teacher, get_session_detail
 import numpy as np
 from PIL import Image
 from datetime import datetime
@@ -230,8 +231,133 @@ def teacher_tab_manage_subjects():
 
 def teacher_tab_attendance_records():
     st.header("Attendance Records")
-    teacher_data = st.session_state.teacher_data
 
+    teacher_id = st.session_state.teacher_data['teacher_id']
+
+    # ---------- INIT SESSION STATE ----------
+    if 'selected_session' not in st.session_state:
+        st.session_state.selected_session = None
+
+    # ---------- VIEW 2 — SESSION DETAIL ----------
+    if st.session_state.selected_session:
+        session = st.session_state.selected_session
+
+        if st.button("← Back to all sessions", type='tertiary'):
+            st.session_state.selected_session = None
+            st.rerun()
+
+        st.subheader(f"{session['name']} — Section {session['section']}")
+        st.caption(session['timestamp'])
+
+        enrolled = get_student_count_by_subject(session['subject_id'])
+        present = session['present']
+        rate = round((present / enrolled * 100)) if enrolled > 0 else 0
+
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Enrolled", enrolled)
+        c2.metric("Attended", f"{present}/{enrolled}")
+        c3.metric("Attendance Rate", f"{rate}%")
+
+        st.divider()
+
+        # Fetch student details for this session
+        detail = get_session_detail(session['subject_id'], session['timestamp'])
+
+        if not detail:
+            st.info("No student data found for this session.")
+            return
+
+        # Table header
+        h1, h2, h3 = st.columns([3, 1, 1])
+        with h1: st.markdown("**Student**")
+        with h2: st.markdown("**ID**")
+        with h3: st.markdown("**Status**")
+
+        st.divider()
+
+        for student in detail:
+            col1, col2, col3 = st.columns([3, 1, 1])
+            with col1:
+                st.write(student['name'])
+            with col2:
+                st.write(student['student_id'])
+            with col3:
+                if student['is_present']:
+                    st.success("Present")
+                else:
+                    st.error("Absent")
+
+        return
+
+    # ---------- VIEW 1 — SESSION LIST ----------
+    sessions = get_attendance_sessions_by_teacher(teacher_id)
+
+    if not sessions:
+        st.info("No attendance sessions recorded yet.")
+        return
+
+    # ---------- FILTER ----------
+    subjects = get_subjects_by_teacher(teacher_id)
+    subject_options = {"All subjects": None}
+    for s in subjects:
+        label = f"{s['name']} ({s['section']})"
+        subject_options[label] = s['subject_id']
+
+    selected_filter = st.selectbox(
+        "Filter by subject",
+        options=list(subject_options.keys()),
+        label_visibility='collapsed'
+    )
+    filtered_id = subject_options[selected_filter]
+
+    # Apply filter
+    if filtered_id:
+        filtered_sessions = [s for s in sessions if s['subject_id'] == filtered_id]
+    else:
+        filtered_sessions = sessions
+
+    # ---------- SUMMARY METRICS ----------
+    total_sessions = len(filtered_sessions)
+    avg_attendance = round(
+        sum(s['present'] / s['total'] * 100 for s in filtered_sessions if s['total'] > 0) / total_sessions
+    ) if total_sessions > 0 else 0
+
+    enrolled_count = get_student_count_by_subject(filtered_id) if filtered_id else "—"
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Total Sessions", total_sessions)
+    c2.metric("Avg Attendance", f"{avg_attendance}%")
+    c3.metric("Enrolled Students", enrolled_count)
+
+    st.divider()
+
+    # ---------- SESSION TABLE ----------
+    h1, h2, h3, h4, h5 = st.columns([2, 1, 2, 1, 1])
+    with h1: st.markdown("**Subject**")
+    with h2: st.markdown("**Section**")
+    with h3: st.markdown("**Date & Time**")
+    with h4: st.markdown("**Attended**")
+    with h5: st.markdown("")
+
+    st.divider()
+
+    for session in filtered_sessions:
+        col1, col2, col3, col4, col5 = st.columns([2, 1, 2, 1, 1])
+        with col1:
+            st.write(session['name'])
+        with col2:
+            st.write(session['section'])
+        with col3:
+            # Format timestamp nicely
+            from datetime import datetime
+            ts = datetime.fromisoformat(session['timestamp'].replace("Z", "+00:00"))
+            st.write(ts.strftime("%d %b %Y, %I:%M %p"))
+        with col4:
+            st.write(f"{session['present']}/{session['total']}")
+        with col5:
+            if st.button("View", key=f"view_{session['subject_id']}_{session['timestamp']}"):
+                st.session_state.selected_session = session
+                st.rerun()
 
 
 

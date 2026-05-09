@@ -110,3 +110,74 @@ def get_class_count_by_subject(subject_id):
     # Count distinct timestamps = distinct sessions
     timestamps = set(r['timestamp'] for r in response.data)
     return len(timestamps)
+
+
+
+
+def get_attendance_sessions_by_teacher(teacher_id):
+    # Step 1 — get all subject_ids for this teacher
+    subjects_response = supabase.table("subjects")\
+        .select("subject_id, name, section")\
+        .eq("teacher_id", teacher_id).execute()
+    
+    if not subjects_response.data:
+        return []
+
+    # Build a lookup: subject_id -> {name, section}
+    subject_map = {
+        s['subject_id']: {'name': s['name'], 'section': s['section']}
+        for s in subjects_response.data
+    }
+    subject_ids = list(subject_map.keys())
+
+    # Step 2 — get all logs for those subjects
+    logs_response = supabase.table("attendance_logs")\
+        .select("subject_id, timestamp, is_present")\
+        .in_("subject_id", subject_ids).execute()
+
+    if not logs_response.data:
+        return []
+
+    # Step 3 — group by (subject_id + timestamp)
+    sessions = {}
+    for log in logs_response.data:
+        key = (log['subject_id'], log['timestamp'])
+        if key not in sessions:
+            sessions[key] = {'present': 0, 'total': 0}
+        sessions[key]['total'] += 1
+        if log['is_present']:
+            sessions[key]['present'] += 1
+
+    # Step 4 — build final list
+    result = []
+    for (subject_id, timestamp), counts in sessions.items():
+        subject_info = subject_map[subject_id]
+        result.append({
+            'subject_id': subject_id,
+            'name': subject_info['name'],
+            'section': subject_info['section'],
+            'timestamp': timestamp,
+            'present': counts['present'],
+            'total': counts['total']
+        })
+
+    # Sort by most recent first
+    result.sort(key=lambda x: x['timestamp'], reverse=True)
+    return result
+
+
+def get_session_detail(subject_id, timestamp):
+    # Get all logs for this specific session
+    response = supabase.table("attendance_logs")\
+        .select("student_id, is_present, students(name)")\
+        .eq("subject_id", subject_id)\
+        .eq("timestamp", timestamp).execute()
+
+    return [
+        {
+            'student_id': r['student_id'],
+            'name': r['students']['name'] if r.get('students') else f"Student {r['student_id']}",
+            'is_present': r['is_present']
+        }
+        for r in response.data
+    ]
