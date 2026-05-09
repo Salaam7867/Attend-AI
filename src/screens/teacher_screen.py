@@ -8,7 +8,7 @@ from src.components.dialog_attendance_report import dialog_attendance_report
 from src.ui.base_layout import style_background_dashboard, style_base_layout
 from src.components.header import header_dashboard
 from src.components.footer import footer_dashboard
-from src.database.db import check_teacher_exists, create_teacher, teacher_login, get_subjects_by_teacher,get_student_count_by_subject
+from src.database.db import check_teacher_exists, create_teacher, get_class_count_by_subject, teacher_login, get_subjects_by_teacher,get_student_count_by_subject
 from src.pipelines.face_pipeline import predict_attendance
 from src.database.db import get_students_by_subject
 import numpy as np
@@ -186,7 +186,7 @@ def teacher_tab_take_attendance():
                             'student_id': sid,
                             'subject_id': selected_subject['subject_id'],
                             'timestamp': current_timestamp,
-                            'is_present': is_present
+                            'status': "Present" if is_present else "Absent"
                             
                         })
 
@@ -217,8 +217,9 @@ def teacher_tab_manage_subjects():
             col1, col2 = st.columns(2)
             with col1:
                 student_count = get_student_count_by_subject(subject['subject_id'])
+                class_count = get_class_count_by_subject(subject['subject_id'])
                 st.markdown(f"**Code:** `{subject['subject_code']}` | **Section:** {subject['section']}")
-                st.markdown(f"👥 {student_count} Students &nbsp;&nbsp; 🎓 {subject.get('class_count', 0)} Classes")
+                st.markdown(f"👥 {student_count} Students &nbsp;&nbsp; 🎓 {class_count} Classes")
             with col2:
                 if st.button(f"Share Code : {subject['name']}", 
                             key=f"share_{subject['subject_id']}", 

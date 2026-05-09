@@ -88,7 +88,7 @@ def save_attendance(attendance_logs):
             "student_id": log['student_id'],
             "subject_id": log['subject_id'],
             "timestamp": log.get('timestamp'),
-            "is_present": log['is_present']
+            "is_present": log['status'].lower() == 'present'  # store as boolean
         }
         for log in attendance_logs
     ]
@@ -101,3 +101,12 @@ def get_student_count_by_subject(subject_id):
         .select("student_id")\
         .eq("subject_id", subject_id).execute()
     return len(response.data)
+
+
+def get_class_count_by_subject(subject_id):
+    response = supabase.table("attendance_logs")\
+        .select("timestamp")\
+        .eq("subject_id", subject_id).execute()
+    # Count distinct timestamps = distinct sessions
+    timestamps = set(r['timestamp'] for r in response.data)
+    return len(timestamps)

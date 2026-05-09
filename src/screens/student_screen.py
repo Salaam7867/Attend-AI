@@ -137,7 +137,7 @@ def student_dashboard():
 
             # Count attendance for this subject
             subject_logs = [l for l in logs if l['subject_id'] == subject['subject_id']]
-            attended = sum(1 for l in subject_logs if l.get('status') == 'present')
+            attended = sum(1 for l in subject_logs if l.get('is_present') == True)
             total = len(subject_logs)
 
             with st.container(border=True):
