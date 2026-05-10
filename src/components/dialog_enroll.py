@@ -40,9 +40,17 @@ def enroll_dialog():
                 if already_enrolled_ids:
                     st.warning("⚠️ You are already enrolled in a section of this subject. Enrolling in another section is not allowed.")
                 else:
+                    # NEW — with this
                     section_options = {f"Section {s['section']} — {s['name']}": s for s in available}
-                    selected_label = st.selectbox("Select Section", options=list(section_options.keys()))
-                    st.session_state.enroll_selected_subject = section_options[selected_label]
+                    all_options = ["— Select a section —"] + list(section_options.keys())
+                    selected_label = st.selectbox("Select Section", options=all_options)
+
+                    if selected_label != "— Select a section —":
+                        st.session_state.enroll_selected_subject = section_options[selected_label]
+                    else:
+                        st.session_state.enroll_selected_subject = None
+
+
 
         elif join_code:
             st.error("Invalid subject code. Please try again.")
