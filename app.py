@@ -1,7 +1,7 @@
 import streamlit as st
 
 
-from components.dialog_auto_enroll import auto_enroll_dialog
+from src.components.dialog_auto_enroll import auto_enroll_dialog
 from src.components.header import header_home
 from src.ui.base_layout import style_base_layout, style_background_dashboard, style_background_home
 from src.screens.teacher_screen import teacher_screen
