@@ -3,22 +3,24 @@ import numpy as np
 from sklearn.svm import SVC
 import streamlit as st
 from PIL import Image
-import importlib.resources as pkg_resources
-import face_recognition_models
+import importlib.resources
+import importlib.util
+import os
 
 from src.database.db import get_all_students
 
 @st.cache_resource
 def load_dlib_models():
-    # Fix for pkg_resources issue on Streamlit Cloud
-    models_path = str(pkg_resources.files(face_recognition_models).joinpath("models"))
+    # Find face_recognition_models package location without importing it
+    spec = importlib.util.find_spec("face_recognition_models")
+    models_path = os.path.join(os.path.dirname(spec.origin), "models")
     
     detector = dlib.get_frontal_face_detector()
     sp = dlib.shape_predictor(
-        f"{models_path}/shape_predictor_68_face_landmarks.dat"
+        os.path.join(models_path, "shape_predictor_68_face_landmarks.dat")
     )
     facerec = dlib.face_recognition_model_v1(
-        f"{models_path}/dlib_face_recognition_resnet_model_v1.dat"
+        os.path.join(models_path, "dlib_face_recognition_resnet_model_v1.dat")
     )
     return detector, sp, facerec
 
