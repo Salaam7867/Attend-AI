@@ -9,7 +9,7 @@ def share_subject_dialog(subject):
 
     # Generate the join link
     app_domain = "attend-ai.streamlit.app"  # Change this to your actual domain when deployed
-    join_link = f"http://{app_domain}/?subject_id={subject['subject_id']}"
+    join_link = f"http://{app_domain}/?subject_code={subject['subject_code']}"
 
     st.subheader("Scan to Join")
     
