@@ -27,7 +27,7 @@ def main():
 
 
     # Handle QR code join flow
-    join_code = st.query_params.get('subject-code')
+    join_code = st.query_params.get('subject_code')
     if join_code:
         if st.session_state.get('login_type') != 'student':
             st.session_state['login_type'] = 'student'
