@@ -8,7 +8,8 @@ def enroll_dialog():
     st.write("Enter the subject code to enroll in a subject.")
     join_code = st.text_input("Subject Code", placeholder="e.g CS101")
 
-    selected_subject = None
+    if 'enroll_selected_subject' not in st.session_state:
+        st.session_state.enroll_selected_subject = None
 
     if join_code:
         # Fetch ALL sections for this subject code
@@ -41,7 +42,7 @@ def enroll_dialog():
                 else:
                     section_options = {f"Section {s['section']} — {s['name']}": s for s in available}
                     selected_label = st.selectbox("Select Section", options=list(section_options.keys()))
-                    selected_subject = section_options[selected_label]
+                    st.session_state.enroll_selected_subject = section_options[selected_label]
 
         elif join_code:
             st.error("Invalid subject code. Please try again.")
@@ -49,9 +50,12 @@ def enroll_dialog():
     if st.button("Enroll Now", type="primary", width='stretch'):
         if not join_code:
             st.error("Please enter a subject code.")
-        elif selected_subject:
+        elif st.session_state.enroll_selected_subject:
             student_id = st.session_state.student_data["student_id"]
-            enroll_student_to_subject(student_id, selected_subject["subject_id"])
-            st.success(f"Successfully enrolled in {selected_subject['name']} — Section {selected_subject['section']}!")
+            enroll_student_to_subject(student_id, st.session_state.enroll_selected_subject["subject_id"])
+            st.success(f"Successfully enrolled in {st.session_state.enroll_selected_subject['name']} — Section {st.session_state.enroll_selected_subject['section']}!")
+            st.session_state.enroll_selected_subject = None
             time.sleep(2)
             st.rerun()
+        else:
+            st.error("Please select a section first.")
