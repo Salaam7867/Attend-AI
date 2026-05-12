@@ -13,6 +13,7 @@ from src.pipelines.face_pipeline import predict_attendance
 from src.database.db import get_students_by_subject
 from src.database.db import get_attendance_sessions_by_teacher, get_session_detail
 import numpy as np
+import pandas as pd
 from PIL import Image
 from datetime import datetime
 
@@ -306,7 +307,6 @@ def teacher_tab_attendance_records():
 
     st.divider()
 
-    import pandas as pd
     rows = []
     for session in filtered_sessions:
         ts = datetime.fromisoformat(session['timestamp'].replace("Z", "+00:00"))
@@ -320,7 +320,7 @@ def teacher_tab_attendance_records():
 
     df = pd.DataFrame(rows)
 
-    st.caption("👆 Click any row to view session details")
+    st.info("☑️ Click the box on the left of a row to view session details")
     event = st.dataframe(
         df,
         hide_index=True,
