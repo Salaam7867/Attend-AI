@@ -134,14 +134,16 @@ def student_dashboard():
     else:
 
         st.markdown("""
-            <style>
-            .subject-card [data-testid="stVerticalBlockBorderWrapper"] {
-                background-color: #FFFDF5 !important;
-                border-radius: 16px !important;
-                border: 1px solid #E8E4D9 !important;
-            }
-            </style>
-            """, unsafe_allow_html=True)
+        <style>
+        div[data-testid="stVerticalBlockBorderWrapper"] > div {
+            background-color: #FFFDF5 !important;
+        }
+        div[data-testid="stVerticalBlockBorderWrapper"] {
+            border-radius: 16px !important;
+            border: 1px solid #E8E4D9 !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         for item in subjects:
             subject = item['subjects']  # ✅ unwrap the nested dict
 
