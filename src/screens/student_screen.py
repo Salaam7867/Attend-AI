@@ -161,7 +161,7 @@ def student_dashboard():
                 if st.button("Unenroll from this course", 
                             key=f"unenroll_{subject['subject_id']}",
                             type="secondary",
-                            icon='material/delete:'):
+                            icon=':material/delete:':
                     unenroll_subject(subject['subject_id'])
                     st.success(f"You have been unenrolled from {subject['name']}.")
                     st.rerun()
