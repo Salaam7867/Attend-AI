@@ -132,18 +132,6 @@ def student_dashboard():
     if not subjects:
         st.info("You are not enrolled in any subjects yet.")
     else:
-
-        st.markdown("""
-        <style>
-        div[data-testid="stVerticalBlockBorderWrapper"] > div {
-            background-color: #FFFDF5 !important;
-        }
-        div[data-testid="stVerticalBlockBorderWrapper"] {
-            border-radius: 16px !important;
-            border: 1px solid #E8E4D9 !important;
-        }
-        </style>
-        """, unsafe_allow_html=True)
         for item in subjects:
             subject = item['subjects']  # ✅ unwrap the nested dict
 
