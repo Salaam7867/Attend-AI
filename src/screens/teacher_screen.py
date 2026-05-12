@@ -306,6 +306,8 @@ def teacher_tab_attendance_records():
 
     st.divider()
 
+    import pandas as pd
+
     rows = []
     for session in filtered_sessions:
         ts = datetime.fromisoformat(session['timestamp'].replace("Z", "+00:00"))
@@ -318,16 +320,19 @@ def teacher_tab_attendance_records():
         })
 
     df = pd.DataFrame(rows)
-    st.dataframe(df, hide_index=True, use_container_width=True)
 
-    st.divider()
-    st.caption("Click a session below to view details:")
-    for session in filtered_sessions:
-        ts = datetime.fromisoformat(session['timestamp'].replace("Z", "+00:00"))
-        label = f"👁 {session['name']} ({session['subject_code']}) — Section {session['section']} — {ts.strftime('%d %b %Y, %I:%M %p')} — {session['present']}/{session['total']} attended"
-        if st.button(label, key=f"view_{session['subject_id']}_{session['timestamp']}", type='tertiary'):
-            st.session_state.selected_session = session
-            st.rerun()
+    # Table + buttons side by side
+    table_col, btn_col = st.columns([5, 1])
+
+    with table_col:
+        st.dataframe(df, hide_index=True, use_container_width=True)
+
+    with btn_col:
+        st.markdown("<br><br>", unsafe_allow_html=True)  # align with table header
+        for session in filtered_sessions:
+            if st.button("View", key=f"view_{session['subject_id']}_{session['timestamp']}", type='primary', use_container_width=True):
+                st.session_state.selected_session = session
+                st.rerun()
 
 def login_teacher(username, password):
     if not username or not password:
