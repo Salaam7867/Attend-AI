@@ -70,7 +70,7 @@ def teacher_dashboard():
         st.session_state.current_teacher_tab = "take_attendance"
 
     # ---------- TAB BUTTONS ----------
-    tab1, tab2, tab3 = st.columns(3,vertical_alignment='center', gap='large')
+    tab1, tab2, tab3 = st.columns(3,vertical_alignment='center', gap='small')
 
     with tab1:
         type1 = "primary" if st.session_state.current_teacher_tab == "take_attendance" else "tertiary"
