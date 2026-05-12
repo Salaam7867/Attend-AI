@@ -132,15 +132,8 @@ def student_dashboard():
     if not subjects:
         st.info("You are not enrolled in any subjects yet.")
     else:
-        for item in subjects:
-            subject = item['subjects']  # ✅ unwrap the nested dict
 
-            # Count attendance for this subject
-            subject_logs = [l for l in logs if l['subject_id'] == subject['subject_id']]
-            attended = sum(1 for l in subject_logs if l.get('is_present') == True)
-            total = len(subject_logs)
-
-            st.markdown("""
+        st.markdown("""
             <style>
             .subject-card [data-testid="stVerticalBlockBorderWrapper"] {
                 background-color: #FFFDF5 !important;
@@ -149,7 +142,13 @@ def student_dashboard():
             }
             </style>
             """, unsafe_allow_html=True)
+        for item in subjects:
+            subject = item['subjects']  # ✅ unwrap the nested dict
 
+            # Count attendance for this subject
+            subject_logs = [l for l in logs if l['subject_id'] == subject['subject_id']]
+            attended = sum(1 for l in subject_logs if l.get('is_present') == True)
+            total = len(subject_logs)
 
 
             with st.container(border=True):
@@ -168,4 +167,5 @@ def student_dashboard():
 
 
     footer_dashboard()
+
 
