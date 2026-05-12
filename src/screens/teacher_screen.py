@@ -307,7 +307,6 @@ def teacher_tab_attendance_records():
     st.divider()
 
     import pandas as pd
-
     rows = []
     for session in filtered_sessions:
         ts = datetime.fromisoformat(session['timestamp'].replace("Z", "+00:00"))
@@ -321,18 +320,19 @@ def teacher_tab_attendance_records():
 
     df = pd.DataFrame(rows)
 
-    # Table + buttons side by side
-    table_col, btn_col = st.columns([5, 1])
+    st.caption("👆 Click any row to view session details")
+    event = st.dataframe(
+        df,
+        hide_index=True,
+        use_container_width=True,
+        on_select='rerun',
+        selection_mode='single-row'
+    )
 
-    with table_col:
-        st.dataframe(df, hide_index=True, use_container_width=True)
-
-    with btn_col:
-        st.markdown("<br><br><br><br><br>", unsafe_allow_html=True)  # align with table header
-        for session in filtered_sessions:
-            if st.button("View", key=f"view_{session['subject_id']}_{session['timestamp']}", type='primary', use_container_width=True):
-                st.session_state.selected_session = session
-                st.rerun()
+    if event.selection.rows:
+        selected_index = event.selection.rows[0]
+        st.session_state.selected_session = filtered_sessions[selected_index]
+        st.rerun()
 
 def login_teacher(username, password):
     if not username or not password:
