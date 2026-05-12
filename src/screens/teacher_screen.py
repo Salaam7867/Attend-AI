@@ -328,7 +328,7 @@ def teacher_tab_attendance_records():
         st.dataframe(df, hide_index=True, use_container_width=True)
 
     with btn_col:
-        st.markdown("<br><br><br>", unsafe_allow_html=True)  # align with table header
+        st.markdown("<br><br><br><br><br>", unsafe_allow_html=True)  # align with table header
         for session in filtered_sessions:
             if st.button("View", key=f"view_{session['subject_id']}_{session['timestamp']}", type='primary', use_container_width=True):
                 st.session_state.selected_session = session
