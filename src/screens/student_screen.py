@@ -140,6 +140,18 @@ def student_dashboard():
             attended = sum(1 for l in subject_logs if l.get('is_present') == True)
             total = len(subject_logs)
 
+            st.markdown("""
+            <style>
+            .subject-card [data-testid="stVerticalBlockBorderWrapper"] {
+                background-color: #FFFDF5 !important;
+                border-radius: 16px !important;
+                border: 1px solid #E8E4D9 !important;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+
+
+
             with st.container(border=True):
                 st.subheader(subject['name'])
                 st.caption(f"Code: `{subject['subject_code']}` | Section: {subject['section']}")
