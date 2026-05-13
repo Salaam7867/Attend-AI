@@ -470,7 +470,7 @@ def teacher_screen_register():
 
     <div class="login-header">
         <div class="login-logo">
-            <div style="width:48px;height:48px;background:#EEEDFE;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:28px;">🎓</div>
+            <div style="width:48px;height:48px;background:#EEEDFE;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:32px;">🎓</div>
             <span>Attend AI</span>
         </div>
         <h2>Create account</h2>
