@@ -418,7 +418,7 @@ def teacher_screen_login():
             <div class="login-logo-box">🎓</div>
             <span>Attend AI</span>
         </div>
-        <h2>Welcome back</h2>
+        <h3>Welcome back</h3>
         <p>AI-powered attendance for modern classrooms</p>
     </div>
     """, unsafe_allow_html=True)
@@ -473,7 +473,7 @@ def teacher_screen_register():
             <div style="width:32px;height:32px;background:#EEEDFE;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:18px;">🎓</div>
             <span>Attend AI</span>
         </div>
-        <h2>Create account</h2>
+        <h3>Create account</h3>
         <p>Join teachers using AI-powered attendance</p>
     </div>
     """, unsafe_allow_html=True)
