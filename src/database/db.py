@@ -10,20 +10,20 @@ def check_pass(pwd, hashed):
     return bcrypt.checkpw(pwd.encode(), hashed.encode())
 
 
-def check_teacher_exists(username):
-    # Check for unique username, returns false when username is already taken
-    response = supabase.table("teachers").select("username").eq("username", username).execute()
+def check_teacher_exists(email):
+    # Check for unique email, returns false when email is already taken
+    response = supabase.table("teachers").select("email").eq("email", email).execute()
     return len(response.data) > 0
 
 
-def create_teacher(username, password, name):
-    data = { "username": username, "password": hash_pass(password), "name": name }
+def create_teacher(email, password, name):
+    data = { "email": email, "password": hash_pass(password), "name": name }
     response = supabase.table("teachers").insert(data).execute()
     return response.data
 
 
-def teacher_login(username, password):
-    response = supabase.table("teachers").select("*").eq("username", username).execute()
+def teacher_login(email, password):
+    response = supabase.table("teachers").select("*").eq("email", email).execute()
     if response.data:
         teacher = response.data[0]
         if check_pass(password, teacher['password']):

@@ -345,7 +345,7 @@ def login_teacher(username, password):
         st.session_state.logged_in = True
         return True
     return False
-
+"""
 def teacher_register(username, name, password, password_confirm):
     if password != password_confirm:
         return False, "Passwords do not match"
@@ -393,8 +393,129 @@ def teacher_screen_login():
             st.rerun()
         
     footer_dashboard()
+"""
 
 
+
+def teacher_screen_login():
+    st.markdown("""
+    <style>
+    .login-header {
+        background: #534AB7;
+        padding: 2rem 1.5rem 1.5rem;
+        border-radius: 16px 16px 0 0;
+        margin-bottom: 0;
+    }
+    .login-header h1 { color: #EEEDFE; font-size: 22px; font-weight: 500; margin: 0 0 4px; }
+    .login-header p { color: #AFA9EC; font-size: 13px; margin: 0; }
+    .login-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
+    .login-logo-box { width: 32px; height: 32px; background: #EEEDFE; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .login-logo span { color: #EEEDFE; font-size: 16px; font-weight: 500; }
+    </style>
+
+    <div class="login-header">
+        <div class="login-logo">
+            <div class="login-logo-box">🎓</div>
+            <span>Attend AI</span>
+        </div>
+        <h1>Welcome back</h1>
+        <p>AI-powered attendance for modern classrooms</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    with st.container(border=True):
+        st.subheader("Login to your account")
+
+        teacher_email = st.text_input("Email", placeholder='teacher@school.com')
+        teacher_pass = st.text_input("Password", type='password', placeholder="Enter password")
+
+        st.space()
+
+        b1, b2 = st.columns(2)
+        with b1:
+            if st.button('Login', type='primary', icon=':material/login:', shortcut='control+enter', width='stretch'):
+                if login_teacher(teacher_email, teacher_pass):
+                    st.toast("Login successful!")
+                    import time
+                    time.sleep(1)
+                    st.rerun()
+                else:
+                    st.error("Invalid email or password")
+        with b2:
+            if st.button('Create account', type='secondary', width='stretch'):
+                st.session_state['teacher_login_type'] = 'register'
+                st.rerun()
+
+        st.divider()
+        if st.button("← Back to Home", type='tertiary', width='stretch'):
+            st.session_state['login_type'] = None
+            st.rerun()
+
+    footer_dashboard()
+
+
+def teacher_screen_register():
+    st.markdown("""
+    <style>
+    .login-header {
+        background: #534AB7;
+        padding: 2rem 1.5rem 1.5rem;
+        border-radius: 16px 16px 0 0;
+    }
+    .login-header h1 { color: #EEEDFE; font-size: 22px; font-weight: 500; margin: 0 0 4px; }
+    .login-header p { color: #AFA9EC; font-size: 13px; margin: 0; }
+    .login-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
+    .login-logo span { color: #EEEDFE; font-size: 16px; font-weight: 500; }
+    </style>
+
+    <div class="login-header">
+        <div class="login-logo">
+            <div style="width:32px;height:32px;background:#EEEDFE;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:18px;">🎓</div>
+            <span>Attend AI</span>
+        </div>
+        <h1>Create account</h1>
+        <p>Join teachers using AI-powered attendance</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    with st.container(border=True):
+        st.subheader("Set up your teacher profile")
+
+        teacher_name = st.text_input("Full name", placeholder='Ananya Roy')
+        teacher_email = st.text_input("Email", placeholder='teacher@school.com')
+        teacher_pass = st.text_input("Password", type='password', placeholder="Enter password")
+        teacher_pass_confirm = st.text_input("Confirm password", type='password', placeholder="Repeat password")
+
+        st.space()
+
+        b1, b2 = st.columns(2)
+        with b1:
+            if st.button('Register', type='primary', icon=':material/person_add:', shortcut='control+enter', width='stretch'):
+                success, message = teacher_register(teacher_email, teacher_name, teacher_pass, teacher_pass_confirm)
+                if success:
+                    st.success(message)
+                    import time
+                    st.session_state.teacher_login_type = 'login'
+                    time.sleep(2)
+                    st.rerun()
+                else:
+                    st.error(message)
+        with b2:
+            if st.button('Login instead', type='secondary', width='stretch'):
+                st.session_state.teacher_login_type = 'login'
+                st.rerun()
+
+        st.divider()
+        if st.button("← Back to Home", type='tertiary', width='stretch'):
+            st.session_state['login_type'] = None
+            st.rerun()
+
+    footer_dashboard()
+
+
+
+
+"""
 def teacher_screen_register():
     c1, c2 = st.columns(2, vertical_alignment='center', gap='xxlarge')
     with c1:
@@ -438,3 +559,6 @@ def teacher_screen_register():
             st.rerun()
 
     footer_dashboard()
+
+    
+"""
