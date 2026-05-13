@@ -465,12 +465,12 @@ def teacher_screen_register():
     .login-header h1 { color: #EEEDFE; font-size: 22px; font-weight: 500; margin: 0 0 4px; }
     .login-header p { color: #AFA9EC; font-size: 13px; margin: 0; }
     .login-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
-    .login-logo span { color: #EEEDFE; font-size: 16px; font-weight: 500; }
+    .login-logo span { color: #EEEDFE; font-size: 18px; font-weight: 500; }
     </style>
 
     <div class="login-header">
         <div class="login-logo">
-            <div style="width:32px;height:32px;background:#EEEDFE;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:18px;">🎓</div>
+            <div style="width:42px;height:42px;background:#EEEDFE;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:24px;">🎓</div>
             <span>Attend AI</span>
         </div>
         <h2>Create account</h2>
