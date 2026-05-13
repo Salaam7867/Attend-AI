@@ -370,7 +370,7 @@ def teacher_screen_login():
     st.header('Login using password', text_alignment='center')
     st.space()
     st.space()
-    teacher_username = st.text_input("Enter username", placeholder='ananyaroy')
+    teacher_email = st.text_input("Enter email", placeholder='ananyaroy')
 
     teacher_pass = st.text_input("Enter password", type='password', placeholder="Enter password")
 
@@ -380,13 +380,13 @@ def teacher_screen_login():
 
     with btnc1:
         if st.button('Login', icon=':material/passkey:', shortcut='control+enter', width='stretch'):
-            if login_teacher(teacher_username, teacher_pass):
+            if login_teacher(teacher_email, teacher_pass):
                 st.toast("Login successful!")
                 import time
                 time.sleep(1)   
                 st.rerun()
             else:
-                st.error("Invalid username or password")
+                st.error("Invalid email or password")
     with btnc2:
         if st.button('Register Instead', type="primary", icon=':material/passkey:', width='stretch'):
             st.session_state['teacher_login_type'] = 'register'
