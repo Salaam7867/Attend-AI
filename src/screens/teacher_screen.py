@@ -473,7 +473,7 @@ def teacher_screen_register():
             <div style="width:32px;height:32px;background:#EEEDFE;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:18px;">🎓</div>
             <span>Attend AI</span>
         </div>
-        <h1>Create account</h1>
+        <h2>Create account</h2>
         <p>Join teachers using AI-powered attendance</p>
     </div>
     """, unsafe_allow_html=True)
