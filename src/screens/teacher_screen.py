@@ -408,7 +408,7 @@ def teacher_screen_register():
     st.space()
     st.space()
 
-    teacher_username = st.text_input("Enter username", placeholder='ananyaroy')
+    teacher_email = st.text_input("Enter email", placeholder='ananyaroy')
 
     teacher_name = st.text_input("Enter name", placeholder='Ananya Roy')
 
@@ -422,7 +422,7 @@ def teacher_screen_register():
 
     with btnc1:
         if st.button('Register now', icon=':material/passkey:', shortcut='control+enter', width='stretch'):
-            success, message = teacher_register(teacher_username, teacher_name, teacher_pass, teacher_pass_confirm)
+            success, message = teacher_register(teacher_email, teacher_name, teacher_pass, teacher_pass_confirm)
             if success:
                 st.success(message)
                 import time
