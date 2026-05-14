@@ -430,20 +430,24 @@ def teacher_screen_login():
 
         st.space()
 
-        b1, b2 = st.columns(2)
-        with b1:
-            if st.button('Login', type='primary', icon=':material/login:', shortcut='control+enter', width='stretch'):
-                if login_teacher(teacher_email, teacher_pass):
-                    st.toast("Login successful!")
-                    import time
-                    time.sleep(1)
-                    st.rerun()
-                else:
-                    st.error("Invalid email or password")
-        with b2:
-            if st.button('Create account', type='secondary', width='stretch'):
-                st.session_state['teacher_login_type'] = 'register'
+        
+        if st.button('Login', type='primary', icon=':material/login:', shortcut='control+enter', width='stretch'):
+            if login_teacher(teacher_email, teacher_pass):
+                st.toast("Login successful!")
+                import time
+                time.sleep(1)
                 st.rerun()
+            else:
+                st.error("Invalid email or password")
+
+        st.markdown(
+            "<p style='text-align:center; color:#888;'>--------------- or ---------------</p>",
+            unsafe_allow_html=True
+        )
+
+        if st.button('Create account', type='secondary', width='stretch'):
+            st.session_state['teacher_login_type'] = 'register'
+            st.rerun()
 
         st.divider()
         if st.button("← Back to Home", type='tertiary', width='stretch'):
@@ -515,7 +519,7 @@ def teacher_screen_register():
 
 
         st.markdown(
-            "<p style='text-align:center; color:#888;'>──────── or ────────</p>",
+            "<p style='text-align:center; color:#888;'>--------------- or ---------------</p>",
             unsafe_allow_html=True
         )
 
@@ -523,7 +527,7 @@ def teacher_screen_register():
         if st.button(
             'Login instead',
             type='secondary',
-            width='stretch'
+            icon=':material/login:'
         ):
             st.session_state.teacher_login_type = 'login'
             st.rerun()
