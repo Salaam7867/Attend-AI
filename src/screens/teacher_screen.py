@@ -345,15 +345,15 @@ def login_teacher(username, password):
         return True
     return False
 
-def teacher_register(username, name, password, password_confirm):
+def teacher_register(email, name, password, password_confirm):
     if password != password_confirm:
         return False, "Passwords do not match"
     
-    if check_teacher_exists(username):
-        return False, "Username already taken"
-    if not username or not name or not password:
+    if check_teacher_exists(email):
+        return False, "Email already taken"
+    if not email or not name or not password:
         return False, "All fields are required"
-    create_teacher(username, password, name)
+    create_teacher(email, password, name)
     return True, "Registration successful! Please login now."
 """
 def teacher_screen_login():
@@ -487,30 +487,46 @@ def teacher_screen_register():
 
         st.space()
 
-        b1, b2 = st.columns(2)
-        with b1:
-            if st.button('Register', type='primary', icon=':material/person_add:', shortcut='control+enter', width='stretch'):
-                success, message = teacher_register(teacher_email, teacher_name, teacher_pass, teacher_pass_confirm)
-                if success:
-                    st.success(message)
-                    import time
-                    st.session_state.teacher_login_type = 'login'
-                    time.sleep(2)
-                    st.rerun()
-                else:
-                    st.error(message)
-        with b2:
-            if st.button('Login instead', type='secondary', width='stretch'):
+        if st.button(
+            'Create account →',
+            type='primary',
+            icon=':material/person_add:',
+            width='stretch'
+        ):
+
+            success, message = teacher_register(
+                teacher_email,
+                teacher_name,
+                teacher_pass,
+                teacher_pass_confirm
+            )
+
+            if success:
+                st.success(message)
+
+                import time
+                time.sleep(2)
+
                 st.session_state.teacher_login_type = 'login'
                 st.rerun()
 
-        st.divider()
-        if st.button("← Back to Home", type='tertiary', width='stretch'):
-            st.session_state['login_type'] = None
+            else:
+                st.error(message)
+
+
+        st.markdown(
+            "<p style='text-align:center; color:#888;'>──────── or ────────</p>",
+            unsafe_allow_html=True
+        )
+
+
+        if st.button(
+            'Login instead',
+            type='secondary',
+            width='stretch'
+        ):
+            st.session_state.teacher_login_type = 'login'
             st.rerun()
-
-    footer_dashboard()
-
 
 """
 def teacher_screen_register():
