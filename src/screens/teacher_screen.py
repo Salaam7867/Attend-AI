@@ -230,7 +230,6 @@ def teacher_tab_manage_subjects():
                     share_subject_dialog(subject)
             
 
-import pandas as pd
 
 def teacher_tab_attendance_records():
     st.header("Attendance Records")
@@ -345,7 +344,7 @@ def login_teacher(username, password):
         st.session_state.logged_in = True
         return True
     return False
-"""
+
 def teacher_register(username, name, password, password_confirm):
     if password != password_confirm:
         return False, "Passwords do not match"
@@ -356,7 +355,7 @@ def teacher_register(username, name, password, password_confirm):
         return False, "All fields are required"
     create_teacher(username, password, name)
     return True, "Registration successful! Please login now."
-
+"""
 def teacher_screen_login():
     c1, c2 = st.columns(2, vertical_alignment='center', gap='xxlarge')
     with c1:
@@ -511,8 +510,6 @@ def teacher_screen_register():
             st.rerun()
 
     footer_dashboard()
-
-
 
 
 """
