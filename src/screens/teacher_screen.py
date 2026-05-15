@@ -48,22 +48,32 @@ def teacher_screen():
 
 
 def teacher_dashboard():
-    st.header(f"Welcome, {st.session_state.teacher_data['name']}!", text_alignment='center')
-    c1,c2 = st.columns(2, vertical_alignment='center', gap='xxlarge')
-    with c1:
-        header_dashboard()  
-    with c2:
-        st.space()
-        st.subheader(f"Welcome, {st.session_state.teacher_data['name']}!", text_alignment='center')
-        if st.button("Logout", type='secondary', key='logoutbtn', shortcut="control+shift+backspace"):
+    header_dashboard()
+
+    st.markdown(
+        f"""
+        <h1 style='text-align:center; margin-top:10px; margin-bottom:30px;'>
+            Welcome, {st.session_state.teacher_data['name']}!
+        </h1>
+        """,
+        unsafe_allow_html=True
+    )
+
+    logout_col1, logout_col2, logout_col3 = st.columns([1,2,1])
+
+    with logout_col2:
+        if st.button(
+            "Logout",
+            type='secondary',
+            key='logoutbtn',
+            width='stretch',
+            shortcut="control+shift+backspace"
+        ):
             st.session_state.logged_in = False
             st.session_state.user_role = None
             st.session_state.teacher_data = None
             st.session_state.teacher_login_type = 'login'
             st.rerun()
-
-
-        st.space()
 
 
     # ---------- TAB STATE ----------
