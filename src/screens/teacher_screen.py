@@ -50,7 +50,7 @@ def teacher_screen():
 def teacher_dashboard():
     header_dashboard()
 
-    st.subheader(f"Welcome, {st.session_state.teacher_data['name']}!")
+    st.header(f"Welcome, {st.session_state.teacher_data['name']}!")
         
 
     logout_col1, logout_col2, logout_col3 = st.columns([1,2,1])
