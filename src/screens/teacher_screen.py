@@ -50,14 +50,8 @@ def teacher_screen():
 def teacher_dashboard():
     header_dashboard()
 
-    st.markdown(
-        f"""
-        <h1 style='text-align:center; margin-top:10px; margin-bottom:30px;'>
-            Welcome, {st.session_state.teacher_data['name']}!
-        </h1>
-        """,
-        unsafe_allow_html=True
-    )
+    st.subheader(f"Welcome, {st.session_state.teacher_data['name']}!")
+        
 
     logout_col1, logout_col2, logout_col3 = st.columns([1,2,1])
 
