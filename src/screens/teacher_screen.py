@@ -408,13 +408,13 @@ def teacher_screen_login():
     .login-header h1 { color: #EEEDFE; font-size: 22px; font-weight: 500; margin: 0 0 4px; }
     .login-header p { color: #AFA9EC; font-size: 13px; margin: 0; }
     .login-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
-    .login-logo-box { width: 32px; height: 32px; background: #EEEDFE; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
     .login-logo span { color: #EEEDFE; font-size: 16px; font-weight: 500; }
     </style>
 
     <div class="login-header">
         <div class="login-logo">
-            <div class="login-logo-box">🎓</div>
+            <img src="https://i.ibb.co/YTYGn5qV/snapclass-logo.png"
+                style="width:52px;height:52px;border-radius:12px;">
             <span>Attend AI</span>
         </div>
         <h2>Welcome back</h2>
@@ -441,7 +441,7 @@ def teacher_screen_login():
                 st.error("Invalid email or password")
 
         st.markdown(
-            "<p style='text-align:center; color:#888;'>--------------- or ---------------</p>",
+            "<p style='text-align:center; color:#999; opacity:0.6;'>--------------- or ---------------</p>",
             unsafe_allow_html=True
         )
 
@@ -462,10 +462,10 @@ def teacher_screen_register():
     <style>
     .login-header {
         background: #534AB7;
-        padding: 2rem 1.5rem 1.5rem;
+        padding: 2.5rem 1.8rem 1.8rem;
         border-radius: 16px 16px 0 0;
     }
-    .login-header h1 { color: #EEEDFE; font-size: 22px; font-weight: 500; margin: 0 0 4px; }
+    .login-header h2 { color: #EEEDFE; font-size: 22px; font-weight: 500; margin: 0 0 4px; }
     .login-header p { color: #AFA9EC; font-size: 13px; margin: 0; }
     .login-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
     .login-logo span { color: #EEEDFE; font-size: 18px; font-weight: 500; }
@@ -473,7 +473,8 @@ def teacher_screen_register():
 
     <div class="login-header">
         <div class="login-logo">
-            <div style="width:48px;height:48px;background:#EEEDFE;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:32px;">🎓</div>
+            <img src="https://i.ibb.co/YTYGn5qV/snapclass-logo.png"
+                style="width:52px;height:52px;border-radius:12px;">
             <span>Attend AI</span>
         </div>
         <h2>Create account</h2>
@@ -519,7 +520,7 @@ def teacher_screen_register():
 
 
         st.markdown(
-            "<p style='text-align:center; color:#888;'>--------------- or ---------------</p>",
+            "<p style='text-align:center; color:#999; opacity:0.6;'>--------------- or ---------------</p>",
             unsafe_allow_html=True
         )
 
@@ -527,6 +528,7 @@ def teacher_screen_register():
         if st.button(
             'Login instead',
             type='secondary',
+            width='stretch',
             icon=':material/login:'
         ):
             st.session_state.teacher_login_type = 'login'
