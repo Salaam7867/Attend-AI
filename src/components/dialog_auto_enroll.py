@@ -32,7 +32,7 @@ def auto_enroll_dialog(subject_code):
             st.rerun()
         return
 
-    st.markdown(f"Would you like to enroll in **{subject['name']}**?")
+    st.markdown(f"Send enrollment request for **{subject['name']}**?")
 
     col1, col2 = st.columns(2)
     with col1:
