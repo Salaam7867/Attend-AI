@@ -1,6 +1,6 @@
 import streamlit as st
 from src.database.config import supabase
-from src.database.db import enroll_student_to_subject
+from src.database.db import create_enrollment_request, enroll_student_to_subject
 import time
 
 @st.dialog("Enroll in a subject", width=400)
@@ -60,10 +60,26 @@ def enroll_dialog():
             st.error("Please enter a subject code.")
         elif st.session_state.enroll_selected_subject:
             student_id = st.session_state.student_data["student_id"]
-            enroll_student_to_subject(student_id, st.session_state.enroll_selected_subject["subject_id"])
-            st.success(f"Successfully enrolled in {st.session_state.enroll_selected_subject['name']} — Section {st.session_state.enroll_selected_subject['section']}!")
-            st.session_state.enroll_selected_subject = None
-            time.sleep(2)
-            st.rerun()
+
+            selected_subject = st.session_state.enroll_selected_subject
+
+            request_sent = create_enrollment_request(
+                student_id,
+                selected_subject["subject_id"],
+                selected_subject["teacher_id"]
+            )
+
+            if request_sent:
+                st.success(
+                    f"Enrollment request sent for {selected_subject['name']} — Section {selected_subject['section']}!"
+                )
+
+                st.session_state.enroll_selected_subject = None
+
+                time.sleep(2)
+                st.rerun()
+
+            else:
+                st.warning("Enrollment request already sent!")
         else:
             st.error("Please select a section first.")
