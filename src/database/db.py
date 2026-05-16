@@ -53,6 +53,15 @@ def get_subjects_by_teacher(teacher_id):
     response = supabase.table("subjects").select("*").eq("teacher_id", teacher_id).execute()
     return response.data
 
+def enroll_student_to_subject(student_id, subject_id):
+    from src.database.config import supabase
+
+    supabase.table("subject_students").insert({
+        "student_id": student_id,
+        "subject_id": subject_id
+    }).execute()
+
+
 def create_enrollment_request(student_id, subject_id, teacher_id):
     from src.database.config import supabase
 
