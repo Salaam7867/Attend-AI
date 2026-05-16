@@ -55,7 +55,7 @@ def teacher_dashboard():
 
     logout_col1, logout_col2, logout_col3 = st.columns([1,2,1])
 
-    with logout_col2:
+    with logout_col3:
         if st.button(
             "Logout",
             type='secondary',
