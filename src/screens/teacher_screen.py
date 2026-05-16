@@ -5,6 +5,8 @@ from src.components.dialog_create_subject import dialog_create_subject
 from src.components.dialog_share_subject import share_subject_dialog   
 from src.components.dialog_attendance import dialog_attendance
 from src.components.dialog_attendance_report import dialog_attendance_report
+from src.components.dialog_enroll_request import enrollment_requests_dialog
+from src.components.dialog_enroll import enroll_dialog
 from src.ui.base_layout import style_background_dashboard, style_base_layout
 from src.components.header import header_dashboard
 from src.components.footer import footer_dashboard
