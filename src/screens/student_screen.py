@@ -145,11 +145,11 @@ def student_dashboard():
                 st.subheader(subject['name'])
                 st.caption(f"Code: `{subject['subject_code']}` | Section: {subject['section']}")
 
-                st.markdown(f"📅 **{total} Total** &nbsp;&nbsp; ✅ **{attended} Attended**")
+                st.markdown(f"🗂️ **{total} Total** &nbsp;&nbsp; ✅ **{attended} Attended**")
 
                 if st.button("Unenroll from this course", 
                             key=f"unenroll_{subject['subject_id']}",
-                            type="secondary",
+                            type="tertiary",
                             icon=':material/delete:'):
                     unenroll_subject(subject['subject_id'])
                     st.success(f"You have been unenrolled from {subject['name']}.")
