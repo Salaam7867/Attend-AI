@@ -62,7 +62,7 @@ def teacher_dashboard():
             "Logout",
             type='secondary',
             key='logoutbtn',
-            width='stretch',
+            use_container_width=True,
             shortcut="control+shift+backspace"
         ):
             st.session_state.logged_in = False
