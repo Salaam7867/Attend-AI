@@ -53,11 +53,27 @@ def get_subjects_by_teacher(teacher_id):
     response = supabase.table("subjects").select("*").eq("teacher_id", teacher_id).execute()
     return response.data
 
-def enroll_student_to_subject(student_id, subject_id):
-    data = { "student_id": student_id, "subject_id": subject_id }
-    response = supabase.table("subject_students").insert(data).execute()
-    return response.data[0] if response.data else None
+def create_enrollment_request(student_id, subject_id, teacher_id):
+    from src.database.config import supabase
 
+    existing = supabase.table("enrollment_requests")\
+        .select("*")\
+        .eq("student_id", student_id)\
+        .eq("subject_id", subject_id)\
+        .eq("status", "pending")\
+        .execute()
+
+    if existing.data:
+        return False
+
+    supabase.table("enrollment_requests").insert({
+        "student_id": student_id,
+        "subject_id": subject_id,
+        "teacher_id": teacher_id,
+        "status": "pending"
+    }).execute()
+
+    return True
 
 def get_student_subjects(student_id):
     response = supabase.table("subject_students").select("subjects(*)").eq("student_id", student_id).execute()
@@ -183,3 +199,6 @@ def get_session_detail(subject_id, timestamp):
         }
         for r in response.data
     ]
+
+
+

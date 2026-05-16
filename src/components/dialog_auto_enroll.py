@@ -1,5 +1,5 @@
 import streamlit as st
-from src.database.db import enroll_student_to_subject
+from src.database.db import create_enrollment_request
 from src.database.config import supabase
 import time
 
@@ -7,7 +7,10 @@ import time
 def auto_enroll_dialog(subject_code):
     student_id = st.session_state.student_data['student_id']
 
-    res = supabase.table("subjects").select("subject_id, name").eq("subject_code", subject_code).execute()
+    res = supabase.table("subjects")\
+    .select("subject_id, name, teacher_id")\
+    .eq("subject_code", subject_code)\
+    .execute()
     
     if not res.data:
         st.error("Subject Code not found!")
@@ -37,9 +40,19 @@ def auto_enroll_dialog(subject_code):
             st.query_params.clear()
             st.rerun()
     with col2:
-        if st.button("Yes enroll now!", type='primary', width='stretch'):
-            enroll_student_to_subject(student_id, subject['subject_id'])
-            st.success("Joined successfully!")
-            st.query_params.clear()
-            time.sleep(2)
-            st.rerun()
+        if st.button("Request Enrollment", type='primary', width='stretch'):
+
+            # Check if request already exists
+            request_sent = create_enrollment_request(
+                student_id,
+                subject["subject_id"],
+                subject["teacher_id"]
+            )
+
+            if request_sent:
+                st.success("Enrollment request sent successfully!")
+                st.query_params.clear()
+                time.sleep(2)
+                st.rerun()
+            else:
+                st.warning("Enrollment request already sent!")
