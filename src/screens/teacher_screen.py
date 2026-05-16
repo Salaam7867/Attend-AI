@@ -241,47 +241,14 @@ def teacher_tab_manage_subjects():
                     share_subject_dialog(subject)
 
                 pending_requests = get_pending_requests(subject['subject_id'])
-                st.write(pending_requests)
-                if pending_requests:
-                    st.markdown(f"### Pending Requests ({len(pending_requests)})")
-
-                    for req in pending_requests:
-
-                        student_name = req['students']['name']
-
-                        r1, r2, r3 = st.columns([3,1,1])
-
-                        with r1:
-                            st.write(student_name)
-
-                        with r2:
-                            if st.button(
-                                "Approve",
-                                key=f"approve_{req['id']}",
-                                type='primary'
-                            ):
-
-                                approve_enrollment_request(
-                                    req['id'],
-                                    req['student_id'],
-                                    req['subject_id']
-                                )
-
-                                st.success("Student approved!")
-                                st.rerun()
-
-                        with r3:
-                            if st.button(
-                                "Reject",
-                                key=f"reject_{req['id']}",
-                                type='secondary'
-                            ):
-
-                                reject_enrollment_request(req['id'])
-
-                                st.warning("Request rejected!")
-                                st.rerun()
-
+                
+                if st.button(
+                    f"View Requests ({len(pending_requests)})",
+                    key=f"view_requests_{subject['subject_id']}",
+                    type='tertiary',
+                    icon=':material/assignment:'
+                ):
+                    enrollment_requests_dialog(subject)
                 
             
 
