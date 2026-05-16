@@ -241,7 +241,7 @@ def teacher_tab_manage_subjects():
                     share_subject_dialog(subject)
 
                 pending_requests = get_pending_requests(subject['subject_id'])
-
+                st.write(pending_requests)
                 if pending_requests:
                     st.markdown(f"### Pending Requests ({len(pending_requests)})")
 
