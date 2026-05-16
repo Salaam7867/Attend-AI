@@ -15,14 +15,29 @@ def enrollment_requests_dialog(subject):
 
         student_name = req['students']['name']
 
-        c1, c2, c3 = st.columns([3,1,1])
+        c1, c2, c3 = st.columns([4, 1.3, 1.3])
 
         with c1:
-            st.write(student_name)
+            st.markdown(
+                f"""
+                <div style="
+                    padding-top:12px;
+                    font-weight:600;
+                    word-break:break-word;
+                ">
+                    {student_name}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
         with c2:
-            if st.button("Approve", key=f"approve_{req['id']}"):
-
+            if st.button(
+                "Approve",
+                key=f"approve_{req['id']}",
+                type="primary",
+                use_container_width=True
+            ):
                 approve_enrollment_request(
                     req['id'],
                     req['student_id'],
@@ -33,9 +48,14 @@ def enrollment_requests_dialog(subject):
                 st.rerun()
 
         with c3:
-            if st.button("Reject", key=f"reject_{req['id']}"):
-
+            if st.button(
+                "Reject",
+                key=f"reject_{req['id']}",
+                use_container_width=True
+            ):
                 reject_enrollment_request(req['id'])
 
                 st.warning("Rejected!")
                 st.rerun()
+
+        st.divider()
