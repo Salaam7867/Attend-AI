@@ -12,6 +12,11 @@ from src.database.db import check_teacher_exists, create_teacher, get_class_coun
 from src.pipelines.face_pipeline import predict_attendance
 from src.database.db import get_students_by_subject
 from src.database.db import get_attendance_sessions_by_teacher, get_session_detail
+from src.database.db import (
+    get_pending_requests,
+    approve_enrollment_request,
+    reject_enrollment_request
+)
 import numpy as np
 import pandas as pd
 from PIL import Image

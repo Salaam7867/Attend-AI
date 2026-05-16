@@ -210,4 +210,39 @@ def get_session_detail(subject_id, timestamp):
     ]
 
 
+def get_pending_requests(subject_id):
+    from src.database.config import supabase
+
+    res = supabase.table("enrollment_requests")\
+        .select("*, students(name)")\
+        .eq("subject_id", subject_id)\
+        .eq("status", "pending")\
+        .execute()
+
+    return res.data
+
+def approve_enrollment_request(request_id, student_id, subject_id):
+    from src.database.config import supabase
+
+    # Add actual enrollment
+    enroll_student_to_subject(student_id, subject_id)
+
+    # Update request status
+    supabase.table("enrollment_requests")\
+        .update({"status": "approved"})\
+        .eq("id", request_id)\
+        .execute()
+    
+
+def reject_enrollment_request(request_id):
+    from src.database.config import supabase
+
+    supabase.table("enrollment_requests")\
+        .update({"status": "rejected"})\
+        .eq("id", request_id)\
+        .execute()
+    
+
+
+
 
