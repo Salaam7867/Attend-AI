@@ -50,11 +50,13 @@ def teacher_screen():
 def teacher_dashboard():
     header_dashboard()
 
-    st.header(f"Welcome, {st.session_state.teacher_data['name']}!")
-        
 
     logout_col1, logout_col2, logout_col3 = st.columns([1,2,1])
 
+    with logout_col1:
+        #st.image("https://i.ibb.co/YTYGn5qV/snapclass-logo.png", width=40)
+        st.header(f"Welcome, {st.session_state.teacher_data['name']}!")
+        
     with logout_col3:
         if st.button(
             "Logout",
