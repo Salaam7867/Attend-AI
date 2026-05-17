@@ -7,7 +7,6 @@ def enrollment_requests_dialog(subject):
 
     st.markdown("""
     <style>
-    /* Keep columns side-by-side on mobile */
     [data-testid="stHorizontalBlock"] {
         flex-wrap: nowrap !important;
         gap: 8px !important;
@@ -15,17 +14,10 @@ def enrollment_requests_dialog(subject):
     [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
         min-width: 0 !important;
         flex: 1 !important;
-        width: auto !important;
     }
-    /* Shrink the default padding Streamlit adds between elements */
-    [data-testid="stVerticalBlockBorderWrapper"] > div > div {
-        gap: 0 !important;
-    }
-    .req-divider {
-        border: none;
-        border-top: 1px solid rgba(128,128,128,0.15);
-        margin: 6px 0 10px 0;
-    }
+    /* Remove excess spacing between elements */
+    .stMarkdown { margin-bottom: 0 !important; }
+    .stButton  { margin-top: 4px !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -50,26 +42,24 @@ def enrollment_requests_dialog(subject):
         student_name  = req['students'].get('name', student_email)
         initials = ''.join(w[0].upper() for w in student_name.split()[:2])
 
-        # thin divider between rows (no st.divider() = no huge gap)
-        st.markdown('<hr class="req-divider">', unsafe_allow_html=True)
+        st.markdown('<hr style="border:none;border-top:1px solid rgba(128,128,128,0.2);margin:8px 0">', unsafe_allow_html=True)
 
-        # Name row — color uses `currentColor` so it works in light + dark mode
-        st.markdown(
-            f"""<div style="display:flex;align-items:center;gap:8px;margin:4px 0 6px 0;">
-              <div style="
-                width:26px;height:26px;border-radius:50%;
-                background:rgba(100,120,200,0.15);flex-shrink:0;
-                display:inline-flex;align-items:center;justify-content:center;
-                font-size:11px;font-weight:600;
-                color:rgba(100,120,200,0.9);
-              ">{initials}</div>
-              <span style="font-size:13px;word-break:break-all;
-                color:inherit;
-              ">{student_email}</span>
-            </div>""",
-            unsafe_allow_html=True
-        )
+        # ── Avatar + name: native st.write for the text ──────────
+        col_info, col_spacer = st.columns([1, 10])
+        with col_info:
+            st.markdown(
+                f'<div style="width:28px;height:28px;border-radius:50%;'
+                f'background:rgba(100,120,200,0.15);display:flex;'
+                f'align-items:center;justify-content:center;'
+                f'font-size:11px;font-weight:600;color:#6478c8;margin-top:4px">'
+                f'{initials}</div>',
+                unsafe_allow_html=True
+            )
+        with col_spacer:
+            # Native st.write — always respects light/dark theme
+            st.write(student_email)
 
+        # ── Action buttons ────────────────────────────────────────
         col_approve, col_reject = st.columns(2)
 
         with col_approve:
