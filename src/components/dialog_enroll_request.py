@@ -5,9 +5,9 @@ from src.database.db import get_pending_requests, approve_enrollment_request, re
 @st.dialog("Enrollment Requests")
 def enrollment_requests_dialog(subject):
 
-    # ── Force columns to stay side-by-side on mobile ─────────────
     st.markdown("""
     <style>
+    /* Keep columns side-by-side on mobile */
     [data-testid="stHorizontalBlock"] {
         flex-wrap: nowrap !important;
         gap: 8px !important;
@@ -16,6 +16,15 @@ def enrollment_requests_dialog(subject):
         min-width: 0 !important;
         flex: 1 !important;
         width: auto !important;
+    }
+    /* Shrink the default padding Streamlit adds between elements */
+    [data-testid="stVerticalBlockBorderWrapper"] > div > div {
+        gap: 0 !important;
+    }
+    .req-divider {
+        border: none;
+        border-top: 1px solid rgba(128,128,128,0.15);
+        margin: 6px 0 10px 0;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -36,19 +45,27 @@ def enrollment_requests_dialog(subject):
             st.success(f"Approved {count} students!")
             st.rerun()
 
-    st.divider()
-
     for req in pending_requests:
         student_email = req['students'].get('email', '')
         student_name  = req['students'].get('name', student_email)
         initials = ''.join(w[0].upper() for w in student_name.split()[:2])
 
+        # thin divider between rows (no st.divider() = no huge gap)
+        st.markdown('<hr class="req-divider">', unsafe_allow_html=True)
+
+        # Name row — color uses `currentColor` so it works in light + dark mode
         st.markdown(
-            f"""<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-              <div style="width:28px;height:28px;border-radius:50%;background:#e8edf5;
-                flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;
-                font-size:11px;font-weight:600;color:#4a6fa5;">{initials}</div>
-              <span style="font-size:13px;word-break:break-all;">{student_email}</span>
+            f"""<div style="display:flex;align-items:center;gap:8px;margin:4px 0 6px 0;">
+              <div style="
+                width:26px;height:26px;border-radius:50%;
+                background:rgba(100,120,200,0.15);flex-shrink:0;
+                display:inline-flex;align-items:center;justify-content:center;
+                font-size:11px;font-weight:600;
+                color:rgba(100,120,200,0.9);
+              ">{initials}</div>
+              <span style="font-size:13px;word-break:break-all;
+                color:inherit;
+              ">{student_email}</span>
             </div>""",
             unsafe_allow_html=True
         )
@@ -66,5 +83,3 @@ def enrollment_requests_dialog(subject):
                          use_container_width=True):
                 reject_enrollment_request(req['id'])
                 st.rerun()
-
-        st.divider()
