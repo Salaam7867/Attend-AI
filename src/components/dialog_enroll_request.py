@@ -64,3 +64,4 @@ def enrollment_requests_dialog(subject):
                          use_container_width=True):
                 reject_enrollment_request(req['id'])
                 st.rerun()
+                # st.warning(f"Rejected {student_email}")
