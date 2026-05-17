@@ -11,13 +11,9 @@ def enrollment_requests_dialog(subject):
         return
 
     count = len(pending_requests)
-    st.markdown(
-        f"<p style='color:var(--text-color);font-size:13px;margin:0 0 8px'>"
-        f"<b>{count}</b> pending request{'s' if count != 1 else ''}</p>",
-        unsafe_allow_html=True
-    )
+    st.caption(f"{count} pending request{'s' if count != 1 else ''}")
 
-    # ── Approve all shortcut ──────────────────────────────────────
+    # ── Approve all shortcut (only shown for 2+ requests) ─────────
     if count > 1:
         if st.button(f"✓ Approve all ({count})", use_container_width=True, type="primary"):
             for req in pending_requests:
@@ -27,41 +23,48 @@ def enrollment_requests_dialog(subject):
 
     st.divider()
 
-    # ── Per-student compact rows ──────────────────────────────────
+    # ── Per-student rows ──────────────────────────────────────────
     for req in pending_requests:
         student_email = req['students'].get('email', '')
         student_name  = req['students'].get('name', student_email)
         initials = ''.join(w[0].upper() for w in student_name.split()[:2])
 
-        # Name + initials avatar on the left
-        col_name, col_approve, col_reject = st.columns([5, 1, 1])
+        # Name row — full width, no columns
+        st.markdown(
+            f"""
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              <div style="
+                width:28px;height:28px;border-radius:50%;
+                background:#e8edf5;flex-shrink:0;
+                display:inline-flex;align-items:center;justify-content:center;
+                font-size:11px;font-weight:600;color:#4a6fa5;
+              ">{initials}</div>
+              <span style="font-size:13px;word-break:break-all;">{student_email}</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-        with col_name:
-            st.markdown(
-                f"""
-                <div style="display:flex;align-items:center;gap:8px;padding:4px 0">
-                  <div style="
-                    width:28px;height:28px;border-radius:50%;
-                    background:#e8edf5;display:inline-flex;
-                    align-items:center;justify-content:center;
-                    font-size:11px;font-weight:600;color:#4a6fa5;
-                    flex-shrink:0;
-                  ">{initials}</div>
-                  <span style="font-size:13px;word-break:break-all;">{student_email}</span>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+        # Buttons row — exactly 2 equal columns, always side-by-side on mobile
+        col_approve, col_reject = st.columns(2)
 
         with col_approve:
-            if st.button("✓", key=f"approve_{req['id']}", help="Approve",
-                         use_container_width=True, type="primary"):
+            if st.button(
+                "✓ Approve",
+                key=f"approve_{req['id']}",
+                use_container_width=True,
+                type="primary"
+            ):
                 approve_enrollment_request(req['id'], req['student_id'], req['subject_id'])
                 st.rerun()
 
         with col_reject:
-            if st.button("✕", key=f"reject_{req['id']}", help="Reject",
-                         use_container_width=True):
+            if st.button(
+                "✕ Reject",
+                key=f"reject_{req['id']}",
+                use_container_width=True
+            ):
                 reject_enrollment_request(req['id'])
                 st.rerun()
-                # st.warning(f"Rejected {student_email}")
+
+        st.divider()
