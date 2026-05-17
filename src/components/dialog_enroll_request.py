@@ -9,15 +9,19 @@ def enrollment_requests_dialog(subject):
     <style>
     [data-testid="stHorizontalBlock"] {
         flex-wrap: nowrap !important;
-        gap: 8px !important;
+        align-items: center !important;
     }
     [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
         min-width: 0 !important;
-        flex: 1 !important;
+        flex-shrink: 1 !important;
     }
-    /* Remove excess spacing between elements */
-    .stMarkdown { margin-bottom: 0 !important; }
-    .stButton  { margin-top: 4px !important; }
+    /* Make buttons small and square */
+    [data-testid="stHorizontalBlock"] .stButton button {
+        padding: 4px 8px !important;
+        font-size: 16px !important;
+        line-height: 1 !important;
+        min-height: 36px !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -37,39 +41,26 @@ def enrollment_requests_dialog(subject):
             st.success(f"Approved {count} students!")
             st.rerun()
 
+    st.divider()
+
     for req in pending_requests:
         student_email = req['students'].get('email', '')
         student_name  = req['students'].get('name', student_email)
-        initials = ''.join(w[0].upper() for w in student_name.split()[:2])
 
-        st.markdown('<hr style="border:none;border-top:1px solid rgba(128,128,128,0.2);margin:8px 0">', unsafe_allow_html=True)
+        # Everything on ONE line: name | ✓ | ✕
+        col_name, col_approve, col_reject = st.columns([7, 1, 1])
 
-        # ── Avatar + name: native st.write for the text ──────────
-        col_info, col_spacer = st.columns([1, 10])
-        with col_info:
-            st.markdown(
-                f'<div style="width:28px;height:28px;border-radius:50%;'
-                f'background:rgba(100,120,200,0.15);display:flex;'
-                f'align-items:center;justify-content:center;'
-                f'font-size:11px;font-weight:600;color:#6478c8;margin-top:4px">'
-                f'{initials}</div>',
-                unsafe_allow_html=True
-            )
-        with col_spacer:
-            # Native st.write — always respects light/dark theme
-            st.write(student_email)
-
-        # ── Action buttons ────────────────────────────────────────
-        col_approve, col_reject = st.columns(2)
+        with col_name:
+            st.write(student_name)   # native st.write — always visible in any theme
 
         with col_approve:
-            if st.button("✓ Approve", key=f"approve_{req['id']}",
-                         use_container_width=True, type="primary"):
+            if st.button("✓", key=f"approve_{req['id']}", type="primary",
+                         help="Approve", use_container_width=True):
                 approve_enrollment_request(req['id'], req['student_id'], req['subject_id'])
                 st.rerun()
 
         with col_reject:
-            if st.button("✕ Reject", key=f"reject_{req['id']}",
-                         use_container_width=True):
+            if st.button("✕", key=f"reject_{req['id']}",
+                         help="Reject", use_container_width=True):
                 reject_enrollment_request(req['id'])
                 st.rerun()
