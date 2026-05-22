@@ -65,9 +65,9 @@ def get_trained_model():
 
 
 def train_classifier():
-    st.cache_resource.clear()
-    model_data = get_trained_model()
-    return bool(model_data)
+    get_trained_model.clear()        # only invalidates this one function
+    get_trained_model()              # re-warms the cache immediately
+    return True
 
 """
 Fallback recognizer when SVM is unavailable (less than 2 students in DB).

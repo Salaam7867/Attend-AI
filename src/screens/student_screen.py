@@ -16,7 +16,9 @@ def student_screen():
     style_background_dashboard()
     style_base_layout()
 
-    show_registration = False
+    # ✅ After — lives in session_state, survives reruns
+    if "show_registration" not in st.session_state:
+        st.session_state.show_registration = False
     if "student_data" in st.session_state:
         student_dashboard()
         return
@@ -62,9 +64,9 @@ def student_screen():
 
                 else:
                     st.info("Face not recognized. Please register with your teacher to use FaceID login.")
-                    show_registration = True
+                    st.session_state.show_registration = True
 
-        if show_registration:
+        if st.session_state.show_registration:
             with st.container():
                 st.header("Register for FaceID Login", text_alignment='center')
                 new_name = st.text_input("Enter your name", placeholder="John Doe"  )
@@ -84,6 +86,8 @@ def student_screen():
                                     st.session_state.user_role = 'student'
                                     st.session_state.student_data = response_data
                                     st.success("Registration successful! Please login now.")
+                                    time.sleep(1)
+                                    st.rerun()
                             else:
                                 st.error("Failed to extract face embedding. Please try again with a clearer photo.")
 
