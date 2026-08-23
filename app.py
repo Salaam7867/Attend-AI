@@ -9,6 +9,27 @@ from src.screens.student_screen import student_screen
 from src.screens.home_screen import home_screen
 
 
+# TEMPORARY SUPABASE CONNECTION TEST
+try:
+    from supabase import create_client
+
+    supabase_url = st.secrets["SUPABASE_URL"]
+    supabase_key = st.secrets["SUPABASE_KEY"]
+
+    supabase = create_client(supabase_url, supabase_key)
+
+    result = supabase.table("students").select("*").limit(1).execute()
+
+    st.success("Supabase connection successful")
+    st.write("Students query result:", result.data)
+
+except Exception as e:
+    st.error(f"Supabase connection error: {type(e).__name__}: {e}")
+
+st.stop()
+
+
+
 def main():
     st.set_page_config(
         page_title="AttendAI - Making Attendance Faster with AI",
