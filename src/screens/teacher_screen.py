@@ -58,26 +58,24 @@ def teacher_dashboard():
     header_dashboard()
 
 
-    logout_col1, logout_col2, logout_col3 = st.columns([1,2,1])
+    logout_col1, logout_col2 = st.columns([4, 1])
 
     with logout_col1:
-        #st.image("https://i.ibb.co/YTYGn5qV/snapclass-logo.png", width=40)
         st.header(f"Welcome, {st.session_state.teacher_data['name']}!")
-        
-    with logout_col3:
+
+    with logout_col2:
         if st.button(
             "Logout",
-            type='secondary',
-            key='logoutbtn',
+            type="secondary",
+            key="logoutbtn",
             use_container_width=True,
             shortcut="control+shift+backspace"
         ):
             st.session_state.logged_in = False
             st.session_state.user_role = None
             st.session_state.teacher_data = None
-            st.session_state.teacher_login_type = 'login'
+            st.session_state.teacher_login_type = "login"
             st.rerun()
-
 
     # ---------- TAB STATE ----------
     if "current_teacher_tab" not in st.session_state:
