@@ -44,14 +44,14 @@ def enrollment_requests_dialog(subject):
     st.divider()
 
     for req in pending_requests:
-        student_email = req['students'].get('email', '')
-        student_name  = req['students'].get('name', student_email)
-
+        student_name = req['students'].get('name', 'Unknown Student')
+        student_id = req['student_id']
         # Everything on ONE line: name | ✓ | ✕
         col_name, col_approve, col_reject = st.columns([7, 1, 1])
 
         with col_name:
-            st.write(student_name)   # native st.write — always visible in any theme
+            st.write(student_name)
+            st.caption(f"ID: {student_id}")   # native st.write — always visible in any theme
 
         with col_approve:
             if st.button("✓", key=f"approve_{req['id']}", type="primary",
