@@ -63,24 +63,51 @@ def student_screen():
 
 
                 else:
-                    st.info("Face not recognized. Please register with your teacher to use FaceID login.")
+                    st.info("Face not recognized. Please complete registration to use FaceID login.")
                     st.session_state.show_registration = True
 
         if st.session_state.show_registration:
             with st.container():
-                st.header("Register for FaceID Login", text_alignment='center')
-                new_name = st.text_input("Enter your name", placeholder="John Doe"  )
 
-                if st.button("Register FaceID", type='primary'):
+                st.header("Register for FaceID Login", text_alignment='center')
+
+                st.markdown(
+                    """
+                    **Privacy Notice**
+
+                    Your facial information will be used for
+                    identification and attendance purposes within Attend AI.
+                    """
+                )
+                consent = st.checkbox(
+                    "I understand and agree to this use of my facial information."
+                )
+
+                new_name = st.text_input(
+                    "Enter your name",
+                    placeholder="John Doe"
+                )
+
+                if st.button(
+                    "Register FaceID",
+                    type="primary",
+                    disabled=not consent
+                ):
                     if not new_name:
                         st.error("Please enter your name to register.")
                     else:
                         with st.spinner("creating profile..."):
                             embedding = get_face_embeddings(img)
+
                             if embedding:
-                               face_emb = embedding[0].tolist()  # Convert numpy array to list for storage
-                               response_data = create_student(new_name, face_emb)
-                               if response_data:
+                                face_emb = embedding[0].tolist()
+
+                                response_data = create_student(
+                                    new_name,
+                                    face_emb
+                                )
+
+                                if response_data:
                                     train_classifier()
                                     st.session_state.is_logged_in = True
                                     st.session_state.user_role = 'student'
@@ -88,8 +115,12 @@ def student_screen():
                                     st.success("Registration successful! Please login now.")
                                     time.sleep(1)
                                     st.rerun()
+
                             else:
-                                st.error("Failed to extract face embedding. Please try again with a clearer photo.")
+                                st.error(
+                                    "Failed to extract face embedding. "
+                                    "Please try again with a clearer photo."
+                                )
 
     
     footer_dashboard()
