@@ -69,15 +69,11 @@ def student_screen():
         if st.session_state.show_registration:
             with st.container():
 
-                st.header("Register for FaceID Login", text_alignment='center')
+                st.header("Register Your FaceID", text_alignment='center')
 
-                st.markdown(
-                    """
-                    **Privacy Notice**
-
-                    Your facial information will be used for
-                    identification and attendance purposes within Attend AI.
-                    """
+                st.markdown("**Privacy Notice**")
+                st.warning(
+                    "Your facial information will be used only for FaceID login and attendance in Attend AI."
                 )
                 consent = st.checkbox(
                     "I understand and agree to this use of my facial information."
