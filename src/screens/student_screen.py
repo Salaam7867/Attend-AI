@@ -7,7 +7,16 @@ from src.ui.base_layout import style_background_dashboard, style_base_layout
 from src.pipelines.face_pipeline import predict_attendance,get_face_embeddings, get_trained_model, train_classifier  
 from src.components.header import header_dashboard
 from src.components.footer import footer_dashboard
-from src.database.db import get_all_students, create_student, get_student_subjects, get_student_attendance,unenroll_subject
+from src.database.db import (
+    get_all_students,
+    create_student,
+    check_pass,
+    get_student_subjects,
+    get_student_attendance,
+    unenroll_subject
+)
+
+
 from PIL import Image
 
 def student_screen():
@@ -19,6 +28,10 @@ def student_screen():
     # ✅ After — lives in session_state, survives reruns
     if "show_registration" not in st.session_state:
         st.session_state.show_registration = False
+
+    if "pending_student" not in st.session_state:
+        st.session_state.pending_student = None
+
     if "student_data" in st.session_state:
         student_dashboard()
         return
@@ -34,6 +47,38 @@ def student_screen():
     st.space()
     st.space()
 
+
+    if st.session_state.pending_student:
+        student = st.session_state.pending_student
+
+        st.header("Enter your password", text_alignment="center")
+        st.caption(f"Face recognized for {student['name']}")
+
+        password = st.text_input(
+            "Password",
+            type="password",
+            placeholder="Enter your password"
+        )
+
+        if st.button("Login", type="primary", width="stretch"):
+            if check_pass(password, student["password"]):
+                st.session_state.is_logged_in = True
+                st.session_state.user_role = "student"
+                st.session_state.student_data = student
+                st.session_state.pending_student = None
+
+                st.success(f"Welcome, {student['name']}")
+                time.sleep(1)
+                st.rerun()
+            else:
+                st.error("Incorrect password.")
+
+        if st.button("Use a different face"):
+            st.session_state.pending_student = None
+            st.rerun()
+
+        footer_dashboard()
+        return
 
     photo_source = st.camera_input("Position your face in the center")
 
@@ -53,11 +98,7 @@ def student_screen():
                     student = next((student for student in all_students if student['student_id'] == student_id), None)
                     
                     if student:
-                        st.session_state.is_logged_in = True
-                        st.session_state.user_role = 'student'
-                        st.session_state.student_data = student
-                        st.success(f"Welcome, {student['name']}")
-                        time.sleep(2)
+                        st.session_state.pending_student = student
                         st.rerun()
                         
 
