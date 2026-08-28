@@ -84,6 +84,18 @@ def student_screen():
                     placeholder="John Doe"
                 )
 
+                new_password = st.text_input(
+                    "Enter a password",
+                    type="password",
+                    placeholder="••••••••"
+                )
+
+                confirm_password = st.text_input(
+                    "Confirm your password",    
+                    type="password",
+                    placeholder="••••••••"
+                )
+
                 if st.button(
                     "Register FaceID",
                     type="primary",
@@ -91,6 +103,10 @@ def student_screen():
                 ):
                     if not new_name:
                         st.error("Please enter your name to register.")
+                    elif new_password != confirm_password:
+                        st.error("Passwords do not match.")
+                    elif len(new_password) < 6:
+                        st.error("Password must be at least 6 characters long.")
                     else:
                         with st.spinner("creating profile..."):
                             embedding = get_face_embeddings(img)
@@ -100,6 +116,7 @@ def student_screen():
 
                                 response_data = create_student(
                                     new_name,
+                                    new_password,
                                     face_emb
                                 )
 
