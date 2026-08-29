@@ -125,6 +125,11 @@ def student_screen():
                     placeholder="John Doe"
                 )
 
+                new_email = st.text_input(
+                    "Enter your email",
+                    placeholder="xyz@gmail.com"
+                )
+                
                 new_password = st.text_input(
                     "Enter a password",
                     type="password",
@@ -144,6 +149,9 @@ def student_screen():
                 ):
                     if not new_name:
                         st.error("Please enter your name to register.")
+                    elif not new_email:
+                        st.error("Please enter your email to register.")
+                    
                     elif new_password != confirm_password:
                         st.error("Passwords do not match.")
                     elif len(new_password) < 6:
@@ -157,6 +165,7 @@ def student_screen():
 
                                 response_data = create_student(
                                     new_name,
+                                    new_email,
                                     new_password,
                                     face_emb
                                 )

@@ -34,12 +34,15 @@ def get_all_students():
     response = supabase.table("students").select("*").execute()
     return response.data
 
-def create_student(name, password, face_embedding):
+def create_student(name, email, password, face_embedding):
+
     data = {
         "name": name,
+        "email": email,
         "password": hash_pass(password),
         "face_embedding": face_embedding
-    }    
+    }
+
     response = supabase.table("students").insert(data).execute()
     return response.data[0] if response.data else None
 
